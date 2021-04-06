@@ -1,4 +1,6 @@
-from flask import Flask, render_template
+from flask import Flask, render_template,request,redirect
+import indeed
+import so
 
 app = Flask("Super Scrapper")
 
@@ -20,5 +22,12 @@ def potato2():
   return render_template("main.html")
 
 @app.route("/report")
+def report():
+  word = request.args.get('word')
+  if word:
+    word = word.lower()
+  else:
+    return redirect("/")
+  return render_template("report.html", word=word)
 
 app.run(host="0.0.0.0")
