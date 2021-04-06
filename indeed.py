@@ -6,12 +6,9 @@ from math import ceil
 os.system('clear')
 
 LIMIT = 50
-search = input("Indeed! search for? ")
-INDEED_URL = f"https://kr.indeed.com/jobs?q={search}&limit={LIMIT}&radius=25"
 
-
-def get_last_page():
-    result = requests.get(INDEED_URL)
+def get_last_page(url):
+    result = requests.get(url)
 
     soup = BeautifulSoup(result.text, "html.parser")
     pagination = soup.find("div", {"id": "searchCountPages"}).text.strip()
@@ -48,13 +45,13 @@ def extract_job(html):
           }
 
 
-def extract_indeed_jobs(last_page):
+def extract_indeed_jobs(last_page, url):
 
     os.system('clear')
     jobs = []
     for pages in range(last_page):
       print(f"Scrapping INDEED page: {pages}")
-      result = requests.get(f"{INDEED_URL}&start={pages*LIMIT}")
+      result = requests.get(f"{url}&start={pages*LIMIT}")
       # result = requests.get(f"{INDEED_URL}&start={0}")
       soup = BeautifulSoup(result.text, "html.parser")
       results = soup.find_all("div", {"class": "jobsearch-SerpJobCard"})
@@ -64,26 +61,10 @@ def extract_indeed_jobs(last_page):
         jobs.append(job)    
     return jobs
 
-def get_jobs():
-  result = get_last_page()
-  jobs = extract_indeed_jobs(result)
+def get_jobs(search):
+  url = f"https://kr.indeed.com/jobs?q={search}&limit={LIMIT}&radius=25"
+  result = get_last_page(url)
+  jobs = extract_indeed_jobs(result,url)
   return jobs
 
-  os.system('clear')
-  # for pages in range(last_page):
-  # result = requests.get(f"{INDEED_URL}&start={pages*LIMIT}")
-  result = requests.get(f"{INDEED_URL}&start={0}")
-  soup = BeautifulSoup(result.text, "html.parser")
-  results = soup.find_all("div", {"class": "jobsearch-SerpJobCard"})
-  # print(results)  
-  for result in results:
-    title = result.find("h2", {"class":"title"}).find('a')["title"]
-    
-    company = result.find("span", {"class":"company"}).text.strip()
-    if company == "":
-      company = "이름누락-----------------------------------------------------"
-    print(f"{title}, {company}") 
-
-    
-  return
 

@@ -1,8 +1,10 @@
 from flask import Flask, render_template,request,redirect
-import indeed
-import so
+from indeed import get_jobs as indeed_get_jobs
+from so import get_jobs as so_get_jobs
 
 app = Flask("Super Scrapper")
+
+db = {}
 
 @app.route("/")
 def home():
@@ -23,11 +25,18 @@ def potato2():
 
 @app.route("/report")
 def report():
-  word = request.args.get('word')
-  if word:
-    word = word.lower()
+  search = request.args.get('search')
+  if search:
+    search = search.lower()
+    fromDb = db.get(search)
+    if fromDb:
+      indeed_jobs = fromDb
+    else:
+      indeed_jobs = indeed_get_jobs(search)
+      db[search] = indeed_jobs
+    
   else:
     return redirect("/")
-  return render_template("report.html", word=word)
+  return render_template("report.html", word=search, resultsNumber = len(indeed_jobs), results = indeed_jobs)
 
 app.run(host="0.0.0.0")
