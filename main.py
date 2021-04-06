@@ -29,14 +29,14 @@ def report():
   if search:
     search = search.lower()
     fromDb = db.get(search)
-    if True:
-      indeed_jobs = []
+    if fromDb:
+      indeed_jobs = fromDb
     else:
       indeed_jobs = indeed_get_jobs(search)
       db[search] = indeed_jobs
     
   else:
     return redirect("/")
-  return render_template("report.html", word=search, resultsNumber = len(indeed_jobs), results = indeed_jobs)
+  return render_template("report.html", word=search, resultsNumber = len(indeed_jobs), jobs = indeed_jobs)
 
 app.run(host="0.0.0.0")
