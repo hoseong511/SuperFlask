@@ -29,8 +29,8 @@ def report():
   if search:
     search = search.lower()
     fromDb = db.get(search)
-    if fromDb:
-      indeed_jobs = fromDb
+    if True:
+      indeed_jobs = []
     else:
       indeed_jobs = indeed_get_jobs(search)
       db[search] = indeed_jobs
