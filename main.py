@@ -1,6 +1,7 @@
-from flask import Flask, render_template,request,redirect
+from flask import Flask, render_template,request,redirect, send_file
 from indeed import get_jobs as indeed_get_jobs
 from so import get_jobs as so_get_jobs
+from save import save_to_file
 
 # 그냥 서버를 틀어놓으면 끝이구나...
 
@@ -47,9 +48,11 @@ def export():
       raise Exception()
     word = word.lower()
     jobs = db.get(word)
+    print(jobs)
     if not jobs:
       raise Exception()
-    return f"Generate CSV for {word}"
+    save_to_file(jobs,word)    
+    return send_file(f"{word}.csv")
 
   except:
     return redirect("/")
