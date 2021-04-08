@@ -2,13 +2,13 @@ from flask import Flask, render_template,request,redirect
 from indeed import get_jobs as indeed_get_jobs
 from so import get_jobs as so_get_jobs
 
+# 그냥 서버를 틀어놓으면 끝이구나...
+
 app = Flask("Super Scrapper")
 
 db = {}
 
-@app.route("/")
-def home():
-  return "Hello! welcome to super page!!"
+
 
 # github도 마찬가지 https://github.com/hoseong511 하면 hoseong511 repository로 접속되는 거에 대한 원리임!
 @app.route("/<username>")
@@ -19,7 +19,7 @@ def potato(username):
 def contact():
   return "contact me!"
 
-@app.route("/potato")
+@app.route("/")
 def potato2():
   return render_template("main.html")
 
@@ -38,5 +38,20 @@ def report():
   else:
     return redirect("/")
   return render_template("report.html", word=search, resultsNumber = len(indeed_jobs), jobs = indeed_jobs)
+
+@app.route("/export")
+def export():
+  try:
+    word = request.args.get('word')
+    if not word:
+      raise Exception()
+    word = word.lower()
+    jobs = db.get(word)
+    if not jobs:
+      raise Exception()
+    return f"Generate CSV for {word}"
+
+  except:
+    return redirect("/")
 
 app.run(host="0.0.0.0")
